@@ -309,6 +309,11 @@ extern unsigned int kobjsize(const void *objp);
 /* This mask is used to clear all the VMA flags used by mlock */
 #define VM_LOCKED_CLEAR_MASK	(~(VM_LOCKED | VM_LOCKONFAULT))
 
+#ifdef CONFIG_ARCH_MSM8953_SOC_SETTINGS
+#define MSM8953_TLMM_START_ADDR	0x01000000
+#define MSM8953_TLMM_END_ADDR	(0x01300000 - 1)
+#endif
+
 /* Arch-specific flags to clear when updating VM flags on protection change */
 #ifndef VM_ARCH_CLEAR
 # define VM_ARCH_CLEAR	VM_NONE

@@ -143,6 +143,7 @@ config ARCH_MSM8953
 	select COMMON_CLK
 	select COMMON_CLK_QCOM
 	select QCOM_GDSC
+	select ARCH_MSM8953_SOC_SETTINGS
 
 config ARCH_MSM8953_BOOT_ORDERING
 	bool "Enable support for MSM8953 device boot ordering"
