@@ -8,6 +8,7 @@
 
 #include <linux/clk.h>
 
+#if defined(CONFIG_COMMON_CLK_QCOM)
 enum branch_mem_flags {
 	CLKFLAG_RETAIN_PERIPH,
 	CLKFLAG_NORETAIN_PERIPH,
@@ -16,6 +17,9 @@ enum branch_mem_flags {
 	CLKFLAG_PERIPH_OFF_SET,
 	CLKFLAG_PERIPH_OFF_CLEAR,
 };
+#elif defined(CONFIG_COMMON_CLK_MSM)
+#include <linux/clk/msm-clk.h>
+#endif /* CONFIG_COMMON_CLK_QCOM */
 
 void qcom_clk_dump(struct clk *clk, bool calltrace);
 void qcom_clk_bulk_dump(int num_clks, struct clk_bulk_data *clks,

@@ -1113,6 +1113,12 @@ static inline void clk_writel(u32 val, u32 __iomem *reg)
 }
 
 #endif	/* platform dependent I/O accessors */
+#else
+struct of_device_id;
+
+static inline void __init of_clk_init(const struct of_device_id *matches)
+{
+}
 
 #endif /* CONFIG_COMMON_CLK */
 #endif /* CLK_PROVIDER_H */

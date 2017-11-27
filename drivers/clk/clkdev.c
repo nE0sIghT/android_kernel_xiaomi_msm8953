@@ -27,7 +27,7 @@
 static LIST_HEAD(clocks);
 static DEFINE_MUTEX(clocks_mutex);
 
-#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+#if defined(CONFIG_OF)
 static struct clk *__of_clk_get(struct device_node *np, int index,
 			       const char *dev_id, const char *con_id)
 {
