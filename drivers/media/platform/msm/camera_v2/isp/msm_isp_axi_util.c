@@ -696,8 +696,7 @@ void msm_isp_process_reg_upd_epoch_irq(struct vfe_device *vfe_dev,
 					drop_reconfig =
 						temp->isp_page->drop_reconfig;
 				}
-				msm_isp_update_framedrop_reg(stream_info,
-					drop_reconfig);
+				msm_isp_update_framedrop_reg(stream_info);
 			}
 			break;
 		default:
