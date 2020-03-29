@@ -25,7 +25,9 @@
 
 #define ISP_STATS_STREAM_BIT  0x80000000
 
+#ifndef CONFIG_MACH_XIAOMI_MIDO
 #define VFE_HW_LIMIT 1
+#endif
 
 struct msm_vfe_cfg_cmd_list;
 
@@ -357,6 +359,11 @@ struct msm_vfe_axi_stream_release_cmd {
 	uint32_t stream_handle;
 };
 
+struct msm_vfe_update_fe_frame_id {
+	uint32_t frame_id;
+};
+
+
 enum msm_vfe_axi_stream_cmd {
 	STOP_STREAM,
 	START_STREAM,
@@ -435,6 +442,10 @@ struct msm_vfe_axi_restart_cmd {
 	uint32_t enable_camif;
 };
 
+struct msm_vfe_restart_fe_cmd {
+	uint32_t restart_fe;
+};
+
 struct msm_vfe_axi_stream_update_cmd {
 	uint32_t num_streams;
 	enum msm_vfe_axi_stream_update_type update_type;
@@ -494,7 +505,9 @@ enum msm_vfe_reg_cfg_type {
 	VFE_HW_UPDATE_UNLOCK,
 	SET_WM_UB_SIZE,
 	SET_UB_POLICY,
+#ifndef CONFIG_MACH_XIAOMI_MIDO
 	GET_VFE_HW_LIMIT,
+#endif
 };
 
 struct msm_vfe_cfg_cmd2 {
