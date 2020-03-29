@@ -923,6 +923,12 @@ config MSM_BAM_DMUX
 		This handle the interrupts raised by BG and notify the G-link with
 		interrupt event and event data.
 
+
+config SERIAL_NUM
+	bool "Enable Serial Number Proc Interface"
+	help
+	Provide a interface for reading CPU serial number
+
 source "drivers/soc/qcom/wcnss/Kconfig"
 
 config BIG_CLUSTER_MIN_FREQ_ADJUST
