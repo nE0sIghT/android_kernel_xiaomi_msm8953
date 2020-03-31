@@ -111,7 +111,26 @@
                         };
                 };
 
+		pmx_mdss {
+			mdss_dsi_active {
+				config {
+					pins = "gpio61";
+				};
+
+				mux {
+					pins = "gpio61";
+				};
+			};
+
+			mdss_dsi_suspend {
+				config {
+					pins = "gpio61";
+				};
+
+				mux {
+					pins = "gpio61";
+				};
+			};
+		};
 	};
-
 };
-
