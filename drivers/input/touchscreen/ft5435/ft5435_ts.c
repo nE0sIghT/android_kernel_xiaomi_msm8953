@@ -53,17 +53,23 @@
 #define FTS_VENDOR_3	0xD0
 
 static unsigned char firmware_data_vendor1[] = {
+#ifndef CONFIG_MACH_XIAOMI_TISSOT
+	#include "HQ_AL1512_C6_FT5435_Biel0x3b_Ver0a_20170119_app.i"
+#else
 	#include "HQ_D2_XiaoMi_FT5435_BIEL0X3b_Black_V0A_D01_20170712_app.i"
+#endif
 };
 
 static unsigned char firmware_data_vendor2[] = {
-
+#ifndef CONFIG_MACH_XIAOMI_TISSOT
+	#include "HQ_AL1512_C6_FT5435_Ofilm0x51_Ver0a_20170119_app.i"
+#else
 	#include "HQ_D2_XiaoMi_FT5435_ofiml0X51_Black_V06_D01_20170804_app.i"
+#endif
 };
 
 static unsigned char firmware_data_vendor3[] = {
 	#include "HQ_D2_XiaoMi_FT5435_BIEL0X3b+CTC0Xd0_Black_V09_D01_20170811_app.i"
-
 };
 #endif
 #define TCT_KEY_BACK  158
