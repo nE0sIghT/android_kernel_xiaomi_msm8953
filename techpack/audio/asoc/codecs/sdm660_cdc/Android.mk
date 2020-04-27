@@ -21,6 +21,10 @@ else
 DLKM_DIR := $(TOP)/device/qcom/common/dlkm
 endif
 
+ifeq ($(TARGET_SUPPORTS_WEARABLES),true)
+DLKM_DIR := $(BOARD_COMMON_DIR)/dlkm
+endif
+
 # Build audio.ko as $(AUDIO_CHIPSET)_audio.ko
 ###########################################################
 # This is set once per LOCAL_PATH, not per (kernel) module
