@@ -452,16 +452,20 @@ static int msm_pcm_playback_prepare(struct snd_pcm_substream *substream)
 		} else {
 #ifdef CONFIG_MACH_XIAOMI_MIDO
 			ret = q6asm_media_format_block_multi_ch_pcm_v3(
+				prtd->audio_client, runtime->rate,
+				runtime->channels, !prtd->set_channel_map,
+				prtd->channel_map, bits_per_sample,
+				sample_word_size);
 #else
 			ret = q6asm_media_format_block_multi_ch_pcm_v4(
-#endif
 				prtd->audio_client, runtime->rate,
 				runtime->channels, !prtd->set_channel_map,
 				prtd->channel_map, bits_per_sample,
 				sample_word_size, ASM_LITTLE_ENDIAN,
 				DEFAULT_QF);
-		}
 #endif
+
+		}
 	}
 	if (ret < 0)
 		pr_info("%s: CMD Format block failed\n", __func__);
@@ -529,11 +533,12 @@ static int msm_pcm_capture_prepare(struct snd_pcm_substream *substream)
 		else
 #ifdef CONFIG_MACH_XIAOMI_MIDO
 			ret = q6asm_open_read_v3(prtd->audio_client,
+				FORMAT_LINEAR_PCM,bits_per_sample);
 #else
 			ret = q6asm_open_read_v4(prtd->audio_client,
-#endif
 				FORMAT_LINEAR_PCM,
 				bits_per_sample, false);
+#endif
 		if (ret < 0) {
 			pr_err("%s: q6asm_open_read failed\n", __func__);
 			q6asm_audio_client_free(prtd->audio_client);
@@ -615,9 +620,13 @@ static int msm_pcm_capture_prepare(struct snd_pcm_substream *substream)
 	else
 #ifdef CONFIG_MACH_XIAOMI_MIDO
 		ret = q6asm_enc_cfg_blk_pcm_format_support_v3(
+						prtd->audio_client,
+						prtd->samp_rate,
+						prtd->channel_mode,
+						bits_per_sample,
+						sample_word_size);
 #else
 		ret = q6asm_enc_cfg_blk_pcm_format_support_v4(
-#endif
 						prtd->audio_client,
 						prtd->samp_rate,
 						prtd->channel_mode,
@@ -625,6 +634,7 @@ static int msm_pcm_capture_prepare(struct snd_pcm_substream *substream)
 						sample_word_size,
 						ASM_LITTLE_ENDIAN,
 						DEFAULT_QF);
+#endif
 
 	if (ret < 0)
 		pr_debug("%s: cmd cfg pcm was block failed", __func__);
