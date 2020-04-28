@@ -1033,9 +1033,15 @@ static int msm_compr_send_media_format_block(struct snd_compr_stream *cstream,
 		} else {
 #ifdef CONFIG_MACH_XIAOMI_MIDO
 			ret = q6asm_media_format_block_pcm_format_support_v3(
+				        prtd->audio_client,
+					prtd->sample_rate,
+					prtd->num_channels,
+					bit_width, stream_id,
+					use_default_chmap,
+					chmap,
+					sample_word_size);
 #else
 			ret = q6asm_media_format_block_pcm_format_support_v4(
-#endif
 					prtd->audio_client,
 					prtd->sample_rate,
 					prtd->num_channels,
@@ -1045,6 +1051,7 @@ static int msm_compr_send_media_format_block(struct snd_compr_stream *cstream,
 					sample_word_size,
 					ASM_LITTLE_ENDIAN,
 					DEFAULT_QF);
+#endif
 		}
 		if (ret < 0)
 			pr_err("%s: CMD Format block failed\n", __func__);
