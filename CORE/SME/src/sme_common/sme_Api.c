@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012-2020 The Linux Foundation. All rights reserved.
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -1484,6 +1484,19 @@ sme_process_cmd:
                             }
                             VOS_TRACE(VOS_MODULE_ID_SME, VOS_TRACE_LEVEL_INFO,
                                     "eSmeCommandBlackList processed");
+                            fContinue = eANI_BOOLEAN_TRUE;
+                            break;
+
+                        case eSmeCommandOlpcMode:
+                            csrLLUnlock(&pMac->sme.smeCmdActiveList);
+                            sme_set_olpc_mode(pMac,
+                                              pCommand->u.olpc_mode_enable);
+                            if (csrLLRemoveEntry(&pMac->sme.smeCmdActiveList,
+                                &pCommand->Link, LL_ACCESS_LOCK)) {
+                                csrReleaseCommand(pMac, pCommand);
+                            }
+                            VOS_TRACE(VOS_MODULE_ID_SME, VOS_TRACE_LEVEL_INFO,
+                                      "sme_command_olpc_mode processed");
                             fContinue = eANI_BOOLEAN_TRUE;
                             break;
 
@@ -15457,7 +15470,8 @@ eHalStatus sme_send_mgmt_tx(tHalHandle hal, uint8_t session_id,
 
 #ifdef WLAN_FEATURE_SAE
 eHalStatus sme_handle_sae_msg(tHalHandle hal, uint8_t session_id,
-                              uint8_t sae_status)
+                              uint8_t sae_status,
+                              tSirMacAddr peer_mac_addr)
 {
     eHalStatus hal_status = eHAL_STATUS_SUCCESS;
     tpAniSirGlobal mac = PMAC_STRUCT(hal);
@@ -15477,11 +15491,17 @@ eHalStatus sme_handle_sae_msg(tHalHandle hal, uint8_t session_id,
             sae_msg->length = sizeof(*sae_msg);
             sae_msg->session_id = session_id;
             sae_msg->sae_status = sae_status;
+            vos_mem_copy(sae_msg->peer_mac_addr,
+                         peer_mac_addr,
+                         VOS_MAC_ADDR_SIZE);
             vos_message.bodyptr = sae_msg;
             vos_message.type =  eWNI_SME_SEND_SAE_MSG;
             VOS_TRACE(VOS_MODULE_ID_SME, VOS_TRACE_LEVEL_DEBUG,
-                      "SAE: sae_status %d session_id %d", sae_msg->sae_status,
-                      sae_msg->session_id);
+                    "SAE: sae_status %d session_id %d Peer: "
+                    MAC_ADDRESS_STR,
+                    sae_msg->sae_status,
+                    sae_msg->session_id,
+                    MAC_ADDR_ARRAY(sae_msg->peer_mac_addr));
 
             vos_status = vos_mq_post_message(VOS_MQ_ID_PE, &vos_message);
             if (!VOS_IS_STATUS_SUCCESS(vos_status)) {
@@ -15538,3 +15558,32 @@ eHalStatus sme_UpdateBlacklist(tHalHandle hHal, uint8_t session_id,
 
     return eHAL_STATUS_SUCCESS;
 }
+
+eHalStatus sme_update_olpc_mode(tHalHandle hHal, bool enable)
+{
+    tSmeCmd *pCommand;
+    tpAniSirGlobal pMac = PMAC_STRUCT(hHal);
+
+    pCommand = csrGetCommandBuffer(pMac);
+    if (pCommand == NULL) {
+        VOS_TRACE(VOS_MODULE_ID_SME, VOS_TRACE_LEVEL_ERROR,
+                  FL("Failed to get command buffer for roam params"));
+        return eHAL_STATUS_RESOURCES;
+    }
+
+    smsLog(pMac, LOG1, "Posting OLPC command to csr queue");
+
+    pCommand->command = eSmeCommandOlpcMode;
+    pCommand->u.olpc_mode_enable = enable;
+
+    if (!HAL_STATUS_SUCCESS(csrQueueSmeCommand(pMac, pCommand, TRUE))) {
+        VOS_TRACE(VOS_MODULE_ID_SME, VOS_TRACE_LEVEL_ERROR,
+                 FL("failed to post OLPC sme command"));
+        csrReleaseCommand(pMac, pCommand);
+        return eHAL_STATUS_FAILURE;
+    }
+
+    return eHAL_STATUS_SUCCESS;
+}
+
+
