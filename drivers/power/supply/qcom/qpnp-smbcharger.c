@@ -42,6 +42,7 @@
 #include <linux/msm_bcl.h>
 #include <linux/ktime.h>
 #include <linux/extcon.h>
+#include <linux/extcon-provider.h>
 #include <linux/pmic-voter.h>
 
 /* Mask/Bit helpers */
@@ -4767,7 +4768,7 @@ static void handle_usb_removal(struct smbchg_chip *chip)
 	cancel_delayed_work_sync(&chip->hvdcp_det_work);
 	smbchg_relax(chip, PM_DETECT_HVDCP);
 	smbchg_change_usb_supply_type(chip, POWER_SUPPLY_TYPE_UNKNOWN);
-	extcon_set_cable_state_(chip->extcon, EXTCON_USB, chip->usb_present);
+	extcon_set_state_sync(chip->extcon, EXTCON_USB, chip->usb_present);
 	smbchg_request_dpdm(chip, false);
 	schedule_work(&chip->usb_set_online_work);
 
@@ -4854,7 +4855,7 @@ static void handle_usb_insertion(struct smbchg_chip *chip)
 	/* Only notify USB if it's not a charger */
 	if (usb_supply_type == POWER_SUPPLY_TYPE_USB ||
 			usb_supply_type == POWER_SUPPLY_TYPE_USB_CDP)
-		extcon_set_cable_state_(chip->extcon, EXTCON_USB,
+		extcon_set_state_sync(chip->extcon, EXTCON_USB,
 				chip->usb_present);
 
 	/* Notify the USB psy if OV condition is not present */
@@ -5784,7 +5785,7 @@ static void update_typec_otg_status(struct smbchg_chip *chip, int mode,
 	if (mode == POWER_SUPPLY_TYPE_DFP) {
 		chip->typec_dfp = true;
 		pval.intval = 1;
-		extcon_set_cable_state_(chip->extcon, EXTCON_USB_HOST,
+		extcon_set_state_sync(chip->extcon, EXTCON_USB_HOST,
 				chip->typec_dfp);
 		/* update FG */
 		set_property_on_fg(chip, POWER_SUPPLY_PROP_STATUS,
@@ -5792,7 +5793,7 @@ static void update_typec_otg_status(struct smbchg_chip *chip, int mode,
 	} else if (force || chip->typec_dfp) {
 		chip->typec_dfp = false;
 		pval.intval = 0;
-		extcon_set_cable_state_(chip->extcon, EXTCON_USB_HOST,
+		extcon_set_state_sync(chip->extcon, EXTCON_USB_HOST,
 				chip->typec_dfp);
 		/* update FG */
 		set_property_on_fg(chip, POWER_SUPPLY_PROP_STATUS,
@@ -6831,7 +6832,7 @@ static irqreturn_t usbid_change_handler(int irq, void *_chip)
 	pr_smb(PR_MISC, "setting usb psy OTG = %d\n",
 			otg_present ? 1 : 0);
 
-	extcon_set_cable_state_(chip->extcon, EXTCON_USB_HOST, otg_present);
+	extcon_set_state_sync(chip->extcon, EXTCON_USB_HOST, otg_present);
 
 	if (otg_present)
 		pr_smb(PR_STATUS, "OTG detected\n");
