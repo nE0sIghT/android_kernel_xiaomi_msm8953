@@ -34,7 +34,7 @@
 
 
 #include <linux/proc_fs.h>
-#include <asm/uaccess.h>
+#include <linux/uaccess.h>
 
 #if defined(CONFIG_FB)
 #include <linux/notifier.h>

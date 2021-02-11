@@ -6,7 +6,7 @@
 #include <linux/platform_device.h>
 #include <linux/io.h>
 #include <linux/proc_fs.h>
-#include <asm/uaccess.h>
+#include <linux/uaccess.h>
 
 #define sn_readl(drvdata, off)	__raw_readl(drvdata->base + off)
 
