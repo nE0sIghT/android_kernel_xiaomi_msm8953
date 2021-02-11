@@ -1742,9 +1742,9 @@ static void debug_work_func(struct work_struct *work)
 }
 #endif
 
-void timer_handler(unsigned long timer_data)
+void timer_handler(struct timer_list *t)
 {
-	struct ist30xx_data *data = (struct ist30xx_data *)timer_data;
+	struct ist30xx_data *data = from_timer(data, t, event_timer);
 	struct ist30xx_status *status = &data->status;
 
 	if (data->irq_working || !data->initialized || data->rec_mode)
@@ -2278,9 +2278,7 @@ static int ist30xx_probe(struct i2c_client *client,
 #endif
 	INIT_DELAYED_WORK(&data->work_cal_reference, cal_ref_work_func);
 
-	init_timer(&data->event_timer);
-	data->event_timer.data = (unsigned long)data;
-	data->event_timer.function = timer_handler;
+	timer_setup(&data->event_timer, timer_handler, 0);
 	data->event_timer.expires = jiffies_64 + EVENT_TIMER_INTERVAL;
 	mod_timer(&data->event_timer, get_jiffies_64() + EVENT_TIMER_INTERVAL * 2);
 
