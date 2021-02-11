@@ -1150,11 +1150,13 @@ static long bt_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		BT_PWR_ERR("unified Current SOC Version : %x", chipset_version);
 		if (chipset_version) {
 			soc_id = chipset_version;
+#if defined CONFIG_BT_SLIM_QCA6390 || defined CONFIG_BTFM_SLIM_WCN3990
 			if (soc_id == QCA_HSP_SOC_ID_0100 ||
 				soc_id == QCA_HSP_SOC_ID_0110 ||
 				soc_id == QCA_HSP_SOC_ID_0200) {
 				ret = bt_disable_asd();
 			}
+#endif
 		} else {
 			BT_PWR_ERR("got invalid soc version");
 			soc_id = 0;
