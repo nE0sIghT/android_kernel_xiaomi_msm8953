@@ -24,6 +24,7 @@ endif
 ifeq ($(CONFIG_ARCH_MSM8953), y)
 include $(srctree)/techpack/audio/config/msm8953auto.conf
 export
+endif
 
 # Use USERINCLUDE when you must reference the UAPI directories only.
 USERINCLUDE     += \
