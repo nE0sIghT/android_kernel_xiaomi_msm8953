@@ -140,8 +140,7 @@ config ARCH_MSM8953
 	select CLKDEV_LOOKUP
 	select HAVE_CLK
 	select HAVE_CLK_PREPARE
-	select COMMON_CLK
-	select COMMON_CLK_QCOM
+	select COMMON_CLK_MSM
 	select QCOM_GDSC
 	select ARCH_MSM8953_SOC_SETTINGS
 
