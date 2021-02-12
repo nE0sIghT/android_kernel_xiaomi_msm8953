@@ -3,10 +3,12 @@
 #include <linux/export.h>
 #include <linux/init.h>
 #include <linux/device.h>
+#include <linux/of.h>
 #include <linux/platform_device.h>
 #include <linux/io.h>
 #include <linux/proc_fs.h>
 #include <linux/uaccess.h>
+#include <linux/seq_file.h>
 
 #define sn_readl(drvdata, off)	__raw_readl(drvdata->base + off)
 
